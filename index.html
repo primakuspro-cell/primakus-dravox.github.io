@@ -1,1 +1,239 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Primakus & Dravox</title>
 
+<style>
+
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:Arial,sans-serif;
+}
+
+body{
+    overflow:hidden;
+    background:black;
+}
+
+.container{
+    display:flex;
+    width:100vw;
+    height:100vh;
+}
+
+.panel{
+    flex:1;
+    position:relative;
+    cursor:pointer;
+    overflow:hidden;
+    transition:all 0.8s ease;
+}
+
+.panel img{
+    width:100%;
+    height:100%;
+    object-fit:cover;
+    transition:0.8s;
+}
+
+.panel:hover img{
+    transform:scale(1.05);
+}
+
+.overlay{
+    position:absolute;
+    top:0;
+    left:0;
+    width:100%;
+    height:100%;
+    background:rgba(0,0,0,0.45);
+
+    display:flex;
+    flex-direction:column;
+    justify-content:center;
+    align-items:center;
+
+    color:white;
+    text-align:center;
+}
+
+.overlay h1{
+    font-size:80px;
+
+    text-shadow:
+        3px 3px 0 black,
+        -3px 3px 0 black,
+        3px -3px 0 black,
+        -3px -3px 0 black;
+}
+
+.overlay p{
+    font-size:28px;
+    margin-top:15px;
+
+    text-shadow:
+        2px 2px 0 black,
+        -2px 2px 0 black,
+        2px -2px 0 black,
+        -2px -2px 0 black;
+}
+
+.hidden{
+    display:none;
+}
+
+/* PAGE PRIMAKUS */
+
+#primakus-page{
+    display:none;
+    position:fixed;
+    inset:0;
+    overflow:auto;
+
+    background:
+        linear-gradient(
+            rgba(0,0,0,0.6),
+            rgba(0,0,0,0.6)
+        ),
+        url("thumb-1920-1377792.png");
+
+    background-size:cover;
+    background-position:center;
+
+    color:white;
+    text-align:center;
+    padding-top:60px;
+}
+
+#primakus-page h1{
+    font-size:90px;
+}
+
+#primakus-page p{
+    font-size:40px;
+}
+
+.back{
+    position:fixed;
+    top:20px;
+    left:20px;
+
+    padding:12px 25px;
+
+    border:none;
+    border-radius:10px;
+
+    font-size:20px;
+    cursor:pointer;
+}
+
+.logo{
+    width:70px;
+    height:70px;
+}
+
+.links{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+}
+
+.links a{
+    display:inline-flex;
+    align-items:center;
+    gap:20px;
+
+    margin:20px;
+    font-size:50px;
+
+    text-decoration:none;
+    color:#38bdf8;
+
+    transition:0.25s;
+}
+
+.links a:hover{
+    transform:scale(1.08);
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="container" id="menu">
+
+    <div class="panel" onclick="openDravox()">
+        <img src="dravox.png">
+        <div class="overlay">
+            <h1>DRAVOX</h1>
+            <p>Développeur Roblox</p>
+        </div>
+    </div>
+
+    <div class="panel" onclick="openPrimakus()">
+        <img src="thumb-1920-1377792.png">
+        <div class="overlay">
+            <h1>PRIMAKUS</h1>
+            <p>Développeur Roblox • Petit Créateur de contenu</p>
+        </div>
+    </div>
+
+</div>
+
+<div id="primakus-page">
+
+    <button class="back" onclick="goBack()">← Retour</button>
+
+    <h1>⭐ Primakus</h1>
+
+    <p>Développeur Roblox • Petit Créateur de contenu</p>
+
+    <div class="links">
+
+        <a href="https://www.tiktok.com/@primakus0" target="_blank">
+            <img src="tiktok.png" class="logo">
+            TikTok
+        </a>
+
+        <a href="https://discord.com/users/1439320270514028695" target="_blank">
+            <img src="discord.png" class="logo">
+            Discord
+        </a>
+
+        <a href="https://youtube.com/@primakus" target="_blank">
+            <img src="youtube.png" class="logo">
+            YouTube
+        </a>
+
+        <a href="https://www.roblox.com/users/profile?username=omit_30" target="_blank">
+            <img src="roblox.png" class="logo">
+            Roblox
+        </a>
+
+    </div>
+
+</div>
+
+<script>
+
+function openPrimakus(){
+    document.getElementById("menu").style.display="none";
+    document.getElementById("primakus-page").style.display="block";
+}
+
+function openDravox(){
+    alert("Page Dravox en construction 🔥");
+}
+
+function goBack(){
+    document.getElementById("primakus-page").style.display="none";
+    document.getElementById("menu").style.display="flex";
+}
+
+</script>
+
+</body>
+</html>
