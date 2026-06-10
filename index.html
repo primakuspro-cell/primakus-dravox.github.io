@@ -314,16 +314,23 @@ function goBack() {
   document.getElementById('menu').style.display = 'flex';
 }
 
-/* LIKES */
-let likes = {
-  primakus: parseInt(localStorage.getItem('likes_primakus') || '0'),
-  dravox:   parseInt(localStorage.getItem('likes_dravox')   || '0')
-};
+/* LIKES — Firebase Realtime Database */
+// ⚠️ REMPLACE ces valeurs par les tiennes depuis la console Firebase
+const FB_URL = 'https://primakus-dravox-default-rtdb.firebaseio.com';
 
-document.getElementById('like-count-primakus').textContent = likes.primakus;
-document.getElementById('like-count-dravox').textContent   = likes.dravox;
+const cooldown = {}; // anti-spam par profil
 
+// Charger les vrais compteurs depuis Firebase au démarrage
 ['primakus', 'dravox'].forEach(who => {
+  fetch(`${FB_URL}/likes/${who}.json`)
+    .then(r => r.json())
+    .then(val => {
+      const count = val || 0;
+      document.getElementById('like-count-' + who).textContent = count;
+    })
+    .catch(() => {});
+
+  // Restaurer l'état liked depuis localStorage (propre à chaque navigateur)
   if (localStorage.getItem('liked_' + who) === 'true') {
     document.getElementById('like-btn-' + who).classList.add('liked');
     document.getElementById('like-icon-' + who).style.filter = 'hue-rotate(320deg) saturate(2) brightness(1.2)';
@@ -331,31 +338,51 @@ document.getElementById('like-count-dravox').textContent   = likes.dravox;
 });
 
 function doLike(who) {
+  // Cooldown 1 seconde anti-crash
+  if (cooldown[who]) return;
+  cooldown[who] = true;
+  setTimeout(() => cooldown[who] = false, 1000);
+
   const already = localStorage.getItem('liked_' + who) === 'true';
   const btn  = document.getElementById('like-btn-' + who);
   const icon = document.getElementById('like-icon-' + who);
+  const delta = already ? -1 : 1;
 
-  if (already) {
-    // unlike
-    likes[who] = Math.max(0, likes[who] - 1);
-    localStorage.setItem('likes_' + who, likes[who]);
-    localStorage.removeItem('liked_' + who);
-    btn.classList.remove('liked');
-    icon.style.filter = '';
-    icon.style.transform = 'scale(0.85)';
-    setTimeout(() => icon.style.transform = 'scale(1)', 250);
-  } else {
-    // like
-    likes[who]++;
-    localStorage.setItem('likes_' + who, likes[who]);
-    localStorage.setItem('liked_' + who, 'true');
-    btn.classList.add('liked');
-    icon.style.filter = 'hue-rotate(320deg) saturate(2) brightness(1.2)';
-    icon.style.transform = 'scale(1.5)';
-    setTimeout(() => icon.style.transform = 'scale(1)', 300);
-    spawnHearts();
-  }
-  document.getElementById('like-count-' + who).textContent = likes[who];
+  // Mise à jour Firebase avec transaction atomique
+  fetch(`${FB_URL}/likes/${who}.json`)
+    .then(r => r.json())
+    .then(current => {
+      const newVal = Math.max(0, (current || 0) + delta);
+      return fetch(`${FB_URL}/likes/${who}.json`, {
+        method: 'PUT',
+        body: JSON.stringify(newVal)
+      }).then(() => newVal);
+    })
+    .then(newVal => {
+      document.getElementById('like-count-' + who).textContent = newVal;
+
+      if (already) {
+        localStorage.removeItem('liked_' + who);
+        btn.classList.remove('liked');
+        icon.style.filter = '';
+        icon.style.transform = 'scale(0.85)';
+        setTimeout(() => icon.style.transform = 'scale(1)', 250);
+      } else {
+        localStorage.setItem('liked_' + who, 'true');
+        btn.classList.add('liked');
+        icon.style.filter = 'hue-rotate(320deg) saturate(2) brightness(1.2)';
+        icon.style.transform = 'scale(1.5)';
+        setTimeout(() => icon.style.transform = 'scale(1)', 300);
+        spawnHearts();
+      }
+    })
+    .catch(() => {
+      // Si Firebase down, fallback localStorage
+      const local = parseInt(localStorage.getItem('likes_' + who) || '0');
+      const newVal = Math.max(0, local + delta);
+      localStorage.setItem('likes_' + who, newVal);
+      document.getElementById('like-count-' + who).textContent = newVal;
+    });
 }
 
 function spawnHearts() {
