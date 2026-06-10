@@ -66,8 +66,9 @@ canvas#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
 /* LIKE BUTTON */
 .like-btn{position:fixed;top:24px;right:24px;z-index:20;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.1);border-radius:40px;padding:7px 16px 7px 8px;cursor:pointer;transition:all 0.3s;backdrop-filter:blur(8px);user-select:none}
 .like-btn:hover:not(.liked){border-color:rgba(255,100,130,0.4);background:rgba(255,100,130,0.05);transform:scale(1.04)}
-.like-btn.liked{border-color:rgba(255,100,130,0.5);cursor:default}
-.like-icon{font-size:22px;transition:transform 0.3s}
+.like-btn.liked{border-color:rgba(255,100,130,0.5)}
+.like-icon{width:32px;height:32px;object-fit:contain;transition:transform 0.3s}
+.like-btn:not(.liked):hover .like-icon{transform:scale(1.2) rotate(-8deg)}
 .like-count{font-size:15px;font-weight:500;color:white;min-width:18px}
 .like-badge{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,100,130,0.6)}
 
@@ -164,7 +165,7 @@ canvas#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
   </div>
   <button class="back-btn back-btn-primakus" onclick="goBack()">← Retour</button>
   <div class="like-btn" id="like-btn-primakus" onclick="doLike('primakus')">
-    <span class="like-icon" id="like-icon-primakus">🤍</span>
+    <img src="like.png" class="like-icon" id="like-icon-primakus">
     <span class="like-count" id="like-count-primakus">0</span>
     <span class="like-badge">likes</span>
   </div>
@@ -211,7 +212,7 @@ canvas#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
   </div>
   <button class="back-btn back-btn-dravox" onclick="goBack()">← Retour</button>
   <div class="like-btn" id="like-btn-dravox" onclick="doLike('dravox')">
-    <span class="like-icon" id="like-icon-dravox">🤍</span>
+    <img src="like.png" class="like-icon" id="like-icon-dravox">
     <span class="like-count" id="like-count-dravox">0</span>
     <span class="like-badge">likes</span>
   </div>
@@ -325,23 +326,36 @@ document.getElementById('like-count-dravox').textContent   = likes.dravox;
 ['primakus', 'dravox'].forEach(who => {
   if (localStorage.getItem('liked_' + who) === 'true') {
     document.getElementById('like-btn-' + who).classList.add('liked');
-    document.getElementById('like-icon-' + who).textContent = '❤️';
+    document.getElementById('like-icon-' + who).style.filter = 'hue-rotate(320deg) saturate(2) brightness(1.2)';
   }
 });
 
 function doLike(who) {
-  if (localStorage.getItem('liked_' + who) === 'true') return;
-  likes[who]++;
-  localStorage.setItem('likes_' + who, likes[who]);
-  localStorage.setItem('liked_' + who, 'true');
-  document.getElementById('like-count-' + who).textContent = likes[who];
+  const already = localStorage.getItem('liked_' + who) === 'true';
   const btn  = document.getElementById('like-btn-' + who);
   const icon = document.getElementById('like-icon-' + who);
-  btn.classList.add('liked');
-  icon.textContent = '❤️';
-  icon.style.transform = 'scale(1.5)';
-  setTimeout(() => icon.style.transform = 'scale(1)', 300);
-  spawnHearts();
+
+  if (already) {
+    // unlike
+    likes[who] = Math.max(0, likes[who] - 1);
+    localStorage.setItem('likes_' + who, likes[who]);
+    localStorage.removeItem('liked_' + who);
+    btn.classList.remove('liked');
+    icon.style.filter = '';
+    icon.style.transform = 'scale(0.85)';
+    setTimeout(() => icon.style.transform = 'scale(1)', 250);
+  } else {
+    // like
+    likes[who]++;
+    localStorage.setItem('likes_' + who, likes[who]);
+    localStorage.setItem('liked_' + who, 'true');
+    btn.classList.add('liked');
+    icon.style.filter = 'hue-rotate(320deg) saturate(2) brightness(1.2)';
+    icon.style.transform = 'scale(1.5)';
+    setTimeout(() => icon.style.transform = 'scale(1)', 300);
+    spawnHearts();
+  }
+  document.getElementById('like-count-' + who).textContent = likes[who];
 }
 
 function spawnHearts() {
