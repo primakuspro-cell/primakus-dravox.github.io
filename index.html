@@ -3,746 +3,364 @@
 <head>
 <meta charset="UTF-8">
 <title>Primakus & Dravox</title>
-
 <style>
-
-@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Inter:wght@300;400;500&display=swap');
-
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
-
-body {
-    background: #0a0a0f;
-    color: #fff;
-    font-family: 'Inter', sans-serif;
-    overflow: hidden;
-    height: 100vh;
-    width: 100vw;
-}
-
-/* PARTICULES */
-
-#particles {
-    position: fixed;
-    inset: 0;
-    pointer-events: none;
-    z-index: 0;
-}
+@import url('https://fonts.googleapis.com/css2?family=Rajdhani:wght@600;700&family=Inter:wght@300;400;500;600&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:#08080e;color:#fff;font-family:'Inter',sans-serif;overflow:hidden;height:100vh;width:100vw;cursor:default}
+canvas#bg{position:fixed;inset:0;z-index:0;pointer-events:none}
 
 /* MENU */
+#menu{display:flex;width:100%;height:100vh;position:relative;z-index:1}
+.panel{flex:1;position:relative;overflow:hidden;cursor:pointer;transition:flex 0.8s cubic-bezier(0.77,0,0.175,1)}
+.panel:hover{flex:1.45}
+.panel-img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 1.2s cubic-bezier(0.77,0,0.175,1),filter 0.8s;filter:brightness(0.2) saturate(0.4) blur(2px)}
+.panel:hover .panel-img{transform:scale(1.1);filter:brightness(0.35) saturate(1.2) blur(0px)}
+.divider{position:absolute;left:50%;top:0;width:1px;height:100%;background:linear-gradient(to bottom,transparent 5%,rgba(180,130,255,0.3) 50%,transparent 95%);z-index:2;pointer-events:none}
+.divider::after{content:'';position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:7px;height:7px;background:rgba(200,150,255,0.6);border-radius:50%;box-shadow:0 0 12px rgba(200,150,255,0.8)}
 
-#menu {
-    display: flex;
-    width: 100%;
-    height: 100vh;
-    position: relative;
-    z-index: 1;
-}
+.panel-overlay{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:10px}
+.panel-line{width:1.5px;height:0;transition:height 0.7s cubic-bezier(0.77,0,0.175,1);margin-bottom:6px;border-radius:2px}
+.panel-dravox .panel-line{background:linear-gradient(to bottom,transparent,#38bdf8,#93c5fd,transparent)}
+.panel-primakus .panel-line{background:linear-gradient(to bottom,transparent,#a78bfa,#f472b6,transparent)}
+.panel:hover .panel-line{height:90px}
 
-.divider {
-    position: absolute;
-    left: 50%;
-    top: 0;
-    width: 1px;
-    height: 100%;
-    background: linear-gradient(to bottom, transparent 5%, rgba(150,150,255,0.2) 50%, transparent 95%);
-    z-index: 2;
-    pointer-events: none;
-}
+.panel-name{font-family:'Rajdhani',sans-serif;font-size:clamp(48px,6vw,80px);font-weight:700;letter-spacing:8px;transition:letter-spacing 0.5s,opacity 0.4s;opacity:0.85}
+.panel:hover .panel-name{letter-spacing:12px;opacity:1}
+.panel-primakus .panel-name{color:#c4b5fd;text-shadow:0 0 40px rgba(167,139,250,0.4)}
+.panel-dravox .panel-name{color:#7dd3fc;text-shadow:0 0 40px rgba(56,189,248,0.4)}
 
-.panel {
-    flex: 1;
-    position: relative;
-    overflow: hidden;
-    cursor: pointer;
-    transition: flex 0.7s cubic-bezier(0.77, 0, 0.175, 1);
-}
+.panel-sub{font-size:11px;font-weight:400;letter-spacing:4px;text-transform:uppercase;color:rgba(255,255,255,0.35);transition:color 0.4s}
+.panel:hover .panel-sub{color:rgba(255,255,255,0.6)}
 
-.panel:hover {
-    flex: 1.4;
-}
+.panel-enter{margin-top:20px;font-size:10px;letter-spacing:5px;text-transform:uppercase;opacity:0;transform:translateY(8px);transition:opacity 0.4s 0.1s,transform 0.4s 0.1s}
+.panel-primakus:hover .panel-enter{opacity:1;transform:translateY(0);color:rgba(196,181,253,0.7)}
+.panel-dravox:hover .panel-enter{opacity:1;transform:translateY(0);color:rgba(125,211,252,0.7)}
 
-.panel img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: transform 1s cubic-bezier(0.77, 0, 0.175, 1), filter 0.7s;
-    filter: brightness(0.35) saturate(0.7);
-}
-
-.panel:hover img {
-    transform: scale(1.08);
-    filter: brightness(0.5) saturate(1.1);
-}
-
-.panel-overlay {
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    gap: 12px;
-}
-
-.panel-line {
-    width: 2px;
-    height: 0;
-    transition: height 0.6s ease;
-    margin-bottom: 8px;
-}
-
-.panel-dravox .panel-line {
-    background: linear-gradient(to bottom, transparent, #38bdf8, #7dd3fc, transparent);
-}
-
-.panel-primakus .panel-line {
-    background: linear-gradient(to bottom, transparent, #c084fc, #f472b6, transparent);
-}
-
-.panel:hover .panel-line {
-    height: 80px;
-}
-
-.panel-name {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 72px;
-    font-weight: 700;
-    letter-spacing: 6px;
-}
-
-.panel-primakus .panel-name {
-    color: #c084fc;
-}
-
-.panel-dravox .panel-name {
-    color: #38bdf8;
-}
-
-.panel-sub {
-    font-size: 13px;
-    font-weight: 300;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.45);
-}
-
-.panel-enter {
-    margin-top: 16px;
-    font-size: 11px;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0);
-    transition: color 0.4s 0.15s;
-}
-
-.panel-primakus:hover .panel-enter {
-    color: rgba(192, 132, 252, 0.8);
-}
-
-.panel-dravox:hover .panel-enter {
-    color: rgba(56, 189, 248, 0.8);
-}
+.panel-corner{position:absolute;width:20px;height:20px;opacity:0;transition:opacity 0.4s}
+.panel-corner.tl{top:24px;left:24px;border-top:1.5px solid;border-left:1.5px solid}
+.panel-corner.tr{top:24px;right:24px;border-top:1.5px solid;border-right:1.5px solid}
+.panel-corner.bl{bottom:24px;left:24px;border-bottom:1.5px solid;border-left:1.5px solid}
+.panel-corner.br{bottom:24px;right:24px;border-bottom:1.5px solid;border-right:1.5px solid}
+.panel-primakus .panel-corner{border-color:rgba(196,181,253,0.5)}
+.panel-dravox .panel-corner{border-color:rgba(125,211,252,0.5)}
+.panel:hover .panel-corner{opacity:1}
 
 /* PAGES */
+.page{display:none;position:fixed;inset:0;z-index:10;overflow-y:auto;background:#08080e}
+.page.active{display:block;animation:pageIn 0.6s cubic-bezier(0.77,0,0.175,1) forwards}
+@keyframes pageIn{from{opacity:0;transform:scale(0.97)}to{opacity:1;transform:scale(1)}}
 
-.page {
-    display: none;
-    position: fixed;
-    inset: 0;
-    z-index: 10;
-    overflow-y: auto;
-    background: #0a0a0f;
-}
+.page-bg{position:fixed;inset:0;z-index:0}
+.page-bg img{width:100%;height:100%;object-fit:cover;filter:brightness(0.06) saturate(0.3)}
+.page-bg-vignette{position:absolute;inset:0;background:radial-gradient(ellipse at 50% 50%,transparent 30%,rgba(8,8,14,0.8) 100%)}
+.bg-glow-primakus{position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,rgba(139,92,246,0.12) 0%,transparent 55%)}
+.bg-glow-dravox{position:absolute;inset:0;background:radial-gradient(ellipse at 50% -10%,rgba(14,165,233,0.12) 0%,transparent 55%)}
 
-.page.active {
-    display: block;
-}
+.page-content{position:relative;z-index:1;min-height:100vh;display:flex;flex-direction:column;align-items:center;padding:90px 20px 80px}
 
-.page-bg {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-}
+/* BACK BUTTON */
+.back-btn{position:fixed;top:24px;left:24px;z-index:20;display:flex;align-items:center;gap:8px;background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.12);color:rgba(255,255,255,0.5);font-family:'Inter',sans-serif;font-size:11px;letter-spacing:3px;text-transform:uppercase;padding:9px 18px;border-radius:2px;cursor:pointer;transition:all 0.3s;backdrop-filter:blur(8px)}
+.back-btn-primakus:hover{background:rgba(139,92,246,0.1);border-color:rgba(196,181,253,0.4);color:#c4b5fd}
+.back-btn-dravox:hover{background:rgba(14,165,233,0.1);border-color:rgba(125,211,252,0.4);color:#7dd3fc}
 
-.page-bg img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    filter: brightness(0.08) saturate(0.5);
-}
+/* LIKE BUTTON */
+.like-btn{position:fixed;top:24px;right:24px;z-index:20;display:flex;align-items:center;gap:10px;background:rgba(255,255,255,0.03);border:0.5px solid rgba(255,255,255,0.1);border-radius:40px;padding:7px 16px 7px 8px;cursor:pointer;transition:all 0.3s;backdrop-filter:blur(8px);user-select:none}
+.like-btn:hover:not(.liked){border-color:rgba(255,100,130,0.4);background:rgba(255,100,130,0.05);transform:scale(1.04)}
+.like-btn.liked{border-color:rgba(255,100,130,0.5);cursor:default}
+.like-icon{font-size:22px;transition:transform 0.3s}
+.like-count{font-size:15px;font-weight:500;color:white;min-width:18px}
+.like-badge{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:rgba(255,100,130,0.6)}
 
-.page-bg-gradient-primakus {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 50% 0%, rgba(168, 85, 247, 0.15) 0%, transparent 60%);
-}
+/* HEART PARTICLES */
+.heart-particle{position:fixed;top:-40px;pointer-events:none;z-index:999;animation:fallDown 2.8s ease-in forwards}
+@keyframes fallDown{0%{transform:translateY(0) rotate(0deg) scale(1);opacity:1}80%{opacity:0.8}100%{transform:translateY(110vh) rotate(720deg) scale(0.5);opacity:0}}
 
-.page-bg-gradient-dravox {
-    position: absolute;
-    inset: 0;
-    background: radial-gradient(ellipse at 50% 0%, rgba(14, 165, 233, 0.15) 0%, transparent 60%);
-}
+/* PAGE HEADER */
+.page-tag{font-size:10px;letter-spacing:6px;text-transform:uppercase;margin-bottom:20px}
+.tag-primakus{color:rgba(196,181,253,0.5)}
+.tag-dravox{color:rgba(125,211,252,0.5)}
+.page-title{font-family:'Rajdhani',sans-serif;font-size:clamp(64px,12vw,110px);font-weight:700;letter-spacing:10px;line-height:1;margin-bottom:6px}
+.title-primakus{color:#c4b5fd;text-shadow:0 0 80px rgba(139,92,246,0.3)}
+.title-dravox{color:#7dd3fc;text-shadow:0 0 80px rgba(14,165,233,0.3)}
+.page-role{font-size:11px;font-weight:300;letter-spacing:5px;text-transform:uppercase;color:rgba(255,255,255,0.25);margin-bottom:56px}
 
-.page-content {
-    position: relative;
-    z-index: 1;
-    min-height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    padding: 80px 20px 60px;
-}
+.sep{width:40px;height:1px;margin-bottom:52px}
+.sep-primakus{background:linear-gradient(to right,transparent,rgba(196,181,253,0.4),transparent)}
+.sep-dravox{background:linear-gradient(to right,transparent,rgba(125,211,252,0.4),transparent)}
 
-/* BOUTON RETOUR */
+/* LINKS */
+.links{display:flex;flex-direction:column;width:100%;max-width:480px;gap:10px}
+.link-item{display:flex;align-items:center;gap:18px;padding:22px 28px;text-decoration:none;color:rgba(255,255,255,0.55);font-size:13px;font-weight:500;letter-spacing:5px;text-transform:uppercase;position:relative;overflow:hidden;border-radius:8px;transition:all 0.35s cubic-bezier(0.25,0.46,0.45,0.94);background:rgba(255,255,255,0.025);border:0.5px solid rgba(255,255,255,0.07)}
+.link-item::before{content:'';position:absolute;inset:0;opacity:0;transition:opacity 0.4s}
+.link-primakus::before{background:linear-gradient(120deg,rgba(139,92,246,0.12),rgba(244,114,182,0.08),transparent)}
+.link-dravox::before{background:linear-gradient(120deg,rgba(14,165,233,0.12),rgba(125,211,252,0.08),transparent)}
+.link-item:hover{color:rgba(255,255,255,0.9);transform:translateX(6px);border-color:rgba(255,255,255,0.14)}
+.link-item:hover::before{opacity:1}
+.link-primakus:hover{border-color:rgba(196,181,253,0.25);box-shadow:0 4px 32px rgba(139,92,246,0.08),inset 0 0 0 0.5px rgba(196,181,253,0.15)}
+.link-dravox:hover{border-color:rgba(125,211,252,0.25);box-shadow:0 4px 32px rgba(14,165,233,0.08),inset 0 0 0 0.5px rgba(125,211,252,0.15)}
+.link-dot{width:6px;height:6px;border-radius:50%;flex-shrink:0;opacity:0;transition:opacity 0.3s,transform 0.3s;transform:scale(0)}
+.link-primakus .link-dot{background:radial-gradient(circle,#c4b5fd,#a78bfa)}
+.link-dravox .link-dot{background:radial-gradient(circle,#7dd3fc,#38bdf8)}
+.link-item:hover .link-dot{opacity:1;transform:scale(1)}
+.link-logo{width:28px;height:28px;object-fit:contain;opacity:0.5;transition:opacity 0.3s,transform 0.3s;flex-shrink:0;border-radius:6px}
+.link-item:hover .link-logo{opacity:1;transform:scale(1.08)}
+.link-text{flex:1}
+.link-arrow{font-size:18px;opacity:0;transition:opacity 0.3s,transform 0.3s;letter-spacing:0}
+.link-primakus .link-arrow{color:#c4b5fd}
+.link-dravox .link-arrow{color:#7dd3fc}
+.link-item:hover .link-arrow{opacity:1;transform:translateX(4px)}
 
-.back-btn {
-    position: fixed;
-    top: 24px;
-    left: 24px;
-    z-index: 20;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(150, 150, 255, 0.2);
-    color: rgba(255, 255, 255, 0.6);
-    font-family: 'Inter', sans-serif;
-    font-size: 12px;
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    padding: 10px 20px;
-    border-radius: 2px;
-    cursor: pointer;
-    transition: all 0.3s;
-}
-
-.back-btn-primakus:hover {
-    background: rgba(192, 132, 252, 0.1);
-    border-color: rgba(192, 132, 252, 0.5);
-    color: #c084fc;
-}
-
-.back-btn-dravox:hover {
-    background: rgba(56, 189, 248, 0.1);
-    border-color: rgba(56, 189, 248, 0.5);
-    color: #38bdf8;
-}
-
-/* SYSTEME DE LIKE */
-
-.like-btn {
-    position: fixed;
-    top: 24px;
-    right: 24px;
-    z-index: 20;
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    background: rgba(255, 255, 255, 0.04);
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 50px;
-    padding: 8px 16px 8px 8px;
-    cursor: pointer;
-    transition: all 0.3s;
-    user-select: none;
-}
-
-.like-btn:hover {
-    background: rgba(255, 255, 255, 0.08);
-    border-color: rgba(255, 100, 130, 0.4);
-    transform: scale(1.05);
-}
-
-.like-btn.liked {
-    border-color: rgba(255, 100, 130, 0.6);
-    background: rgba(255, 100, 130, 0.08);
-    cursor: default;
-}
-
-.like-btn.liked:hover {
-    transform: none;
-}
-
-.like-img {
-    width: 36px;
-    height: 36px;
-    object-fit: contain;
-    transition: transform 0.3s;
-}
-
-.like-btn:not(.liked):hover .like-img {
-    transform: scale(1.2) rotate(-10deg);
-}
-
-.like-count {
-    font-size: 16px;
-    font-weight: 500;
-    color: white;
-    min-width: 20px;
-}
-
-.like-badge {
-    font-size: 10px;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    color: rgba(255, 100, 130, 0.7);
-}
-
-/* COEURS QUI TOMBENT */
-
-.heart-particle {
-    position: fixed;
-    top: -40px;
-    font-size: 24px;
-    pointer-events: none;
-    z-index: 999;
-    animation: fallDown 2.5s ease-in forwards;
-}
-
-@keyframes fallDown {
-    0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
-    80%  { opacity: 1; }
-    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
-}
-
-/* CONTENU PAGE */
-
-.page-tag {
-    font-size: 11px;
-    letter-spacing: 5px;
-    text-transform: uppercase;
-    margin-bottom: 16px;
-}
-
-.tag-primakus { color: rgba(192, 132, 252, 0.6); }
-.tag-dravox   { color: rgba(56, 189, 248, 0.6); }
-
-.page-title {
-    font-family: 'Rajdhani', sans-serif;
-    font-size: 96px;
-    font-weight: 700;
-    letter-spacing: 8px;
-    line-height: 1;
-    margin-bottom: 8px;
-}
-
-.title-primakus { color: #c084fc; }
-.title-dravox   { color: #38bdf8; }
-
-.page-role {
-    font-size: 13px;
-    font-weight: 300;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    color: rgba(255, 255, 255, 0.3);
-    margin-bottom: 60px;
-}
-
-.sep {
-    width: 60px;
-    height: 1px;
-    margin-bottom: 60px;
-}
-
-.sep-primakus { background: linear-gradient(to right, transparent, rgba(192, 132, 252, 0.5), transparent); }
-.sep-dravox   { background: linear-gradient(to right, transparent, rgba(56, 189, 248, 0.5), transparent); }
-
-/* LIENS */
-
-.links {
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-    max-width: 500px;
-}
-
-.link-item {
-    display: flex;
-    align-items: center;
-    gap: 24px;
-    padding: 26px 32px;
-    text-decoration: none;
-    color: rgba(255, 255, 255, 0.65);
-    font-size: 18px;
-    font-weight: 500;
-    letter-spacing: 4px;
-    text-transform: uppercase;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-    position: relative;
-    overflow: hidden;
-    transition: color 0.3s, padding-left 0.3s;
-}
-
-.link-item::before {
-    content: '';
-    position: absolute;
-    left: 0;
-    top: 0;
-    height: 100%;
-    width: 0;
-    transition: width 0.4s;
-}
-
-.link-primakus::before { background: linear-gradient(to right, rgba(168, 85, 247, 0.1), transparent); }
-.link-dravox::before   { background: linear-gradient(to right, rgba(14, 165, 233, 0.1), transparent); }
-
-.link-item:hover::before {
-    width: 100%;
-}
-
-.link-item:hover {
-    color: rgba(255, 255, 255, 0.95);
-    padding-left: 44px;
-}
-
-.link-accent {
-    position: absolute;
-    left: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 3px;
-    height: 0;
-    opacity: 0;
-    transition: height 0.3s, opacity 0.3s;
-    border-radius: 0 2px 2px 0;
-}
-
-.link-primakus .link-accent { background: linear-gradient(to bottom, #c084fc, #f472b6); }
-.link-dravox   .link-accent { background: linear-gradient(to bottom, #38bdf8, #7dd3fc); }
-
-.link-item:hover .link-accent {
-    height: 55%;
-    opacity: 1;
-}
-
-.link-logo {
-    width: 32px;
-    height: 32px;
-    object-fit: contain;
-    opacity: 0.45;
-    transition: opacity 0.3s;
-    flex-shrink: 0;
-}
-
-.link-item:hover .link-logo {
-    opacity: 1;
-}
-
-.link-arrow {
-    margin-left: auto;
-    font-size: 20px;
-    opacity: 0;
-    transition: opacity 0.3s, transform 0.3s;
-}
-
-.link-primakus .link-arrow { color: #c084fc; }
-.link-dravox   .link-arrow { color: #38bdf8; }
-
-.link-item:hover .link-arrow {
-    opacity: 1;
-    transform: translateX(5px);
-}
-
-/* ANIMATION PAGE */
-
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(20px); }
-    to   { opacity: 1; transform: translateY(0); }
-}
-
-.page.active .page-content {
-    animation: fadeIn 0.6s ease forwards;
-}
-
+/* SCAN LINE */
+.scan-line{position:fixed;top:0;left:0;right:0;height:1px;background:rgba(196,181,253,0.1);z-index:5;pointer-events:none;animation:scanDown 8s linear infinite}
+@keyframes scanDown{0%{top:-1%}100%{top:101%}}
 </style>
 </head>
 <body>
 
-<canvas id="particles"></canvas>
+<canvas id="bg"></canvas>
+<div class="scan-line"></div>
 
 <!-- MENU -->
 <div id="menu">
+  <div class="divider"></div>
 
-    <div class="divider"></div>
-
-    <div class="panel panel-dravox" onclick="openPage('dravox')">
-        <img src="dravox.png.jpg">
-        <div class="panel-overlay">
-            <div class="panel-line"></div>
-            <div class="panel-name">DRAVOX</div>
-            <div class="panel-sub">Développeur Roblox</div>
-            <div class="panel-enter">— Entrer —</div>
-        </div>
+  <!-- DRAVOX -->
+  <div class="panel panel-dravox" onclick="openPage('dravox')">
+    <img src="dravox.png.jpg" class="panel-img">
+    <div class="panel-overlay">
+      <div class="panel-corner tl"></div>
+      <div class="panel-corner tr"></div>
+      <div class="panel-corner bl"></div>
+      <div class="panel-corner br"></div>
+      <div class="panel-line"></div>
+      <div class="panel-name">DRAVOX</div>
+      <div class="panel-sub">Développeur Roblox</div>
+      <div class="panel-enter">— Entrer —</div>
     </div>
+  </div>
 
-    <div class="panel panel-primakus" onclick="openPage('primakus')">
-        <img src="thumb-1920-1377792.png">
-        <div class="panel-overlay">
-            <div class="panel-line"></div>
-            <div class="panel-name">PRIMAKUS</div>
-            <div class="panel-sub">Développeur · Créateur</div>
-            <div class="panel-enter">— Entrer —</div>
-        </div>
+  <!-- PRIMAKUS -->
+  <div class="panel panel-primakus" onclick="openPage('primakus')">
+    <img src="thumb-1920-1377792.png" class="panel-img">
+    <div class="panel-overlay">
+      <div class="panel-corner tl"></div>
+      <div class="panel-corner tr"></div>
+      <div class="panel-corner bl"></div>
+      <div class="panel-corner br"></div>
+      <div class="panel-line"></div>
+      <div class="panel-name">PRIMAKUS</div>
+      <div class="panel-sub">Développeur · Créateur</div>
+      <div class="panel-enter">— Entrer —</div>
     </div>
-
+  </div>
 </div>
 
 <!-- PAGE PRIMAKUS -->
 <div class="page" id="primakus-page">
-
-    <div class="page-bg">
-        <img src="thumb-1920-1377792.png">
-        <div class="page-bg-gradient-primakus"></div>
+  <div class="page-bg">
+    <img src="thumb-1920-1377792.png">
+    <div class="page-bg-vignette"></div>
+    <div class="bg-glow-primakus"></div>
+  </div>
+  <button class="back-btn back-btn-primakus" onclick="goBack()">← Retour</button>
+  <div class="like-btn" id="like-btn-primakus" onclick="doLike('primakus')">
+    <span class="like-icon" id="like-icon-primakus">🤍</span>
+    <span class="like-count" id="like-count-primakus">0</span>
+    <span class="like-badge">likes</span>
+  </div>
+  <div class="page-content">
+    <div class="page-tag tag-primakus">✦ Profil</div>
+    <div class="page-title title-primakus">PRIMAKUS</div>
+    <div class="page-role">Développeur Roblox &nbsp;·&nbsp; Créateur de contenu</div>
+    <div class="sep sep-primakus"></div>
+    <div class="links">
+      <a class="link-item link-primakus" href="https://www.tiktok.com/@primakus0" target="_blank">
+        <div class="link-dot"></div>
+        <img src="tiktok.png" class="link-logo">
+        <span class="link-text">TikTok</span>
+        <span class="link-arrow">›</span>
+      </a>
+      <a class="link-item link-primakus" href="https://discord.com/users/1439320270514028695" target="_blank">
+        <div class="link-dot"></div>
+        <img src="discord.png" class="link-logo">
+        <span class="link-text">Discord</span>
+        <span class="link-arrow">›</span>
+      </a>
+      <a class="link-item link-primakus" href="https://youtube.com/@primakus" target="_blank">
+        <div class="link-dot"></div>
+        <img src="youtube.png" class="link-logo">
+        <span class="link-text">YouTube</span>
+        <span class="link-arrow">›</span>
+      </a>
+      <a class="link-item link-primakus" href="https://www.roblox.com/users/profile?username=omit_30" target="_blank">
+        <div class="link-dot"></div>
+        <img src="roblox.png" class="link-logo">
+        <span class="link-text">Roblox</span>
+        <span class="link-arrow">›</span>
+      </a>
     </div>
-
-    <button class="back-btn back-btn-primakus" onclick="goBack()">← Retour</button>
-
-    <!-- BOUTON LIKE PRIMAKUS -->
-    <div class="like-btn" id="like-btn-primakus" onclick="doLike('primakus')">
-        <img src="like.png" class="like-img">
-        <span class="like-count" id="like-count-primakus">0</span>
-        <span class="like-badge">likes</span>
-    </div>
-
-    <div class="page-content">
-
-        <div class="page-tag tag-primakus">Profil</div>
-        <div class="page-title title-primakus">PRIMAKUS</div>
-        <div class="page-role">Développeur Roblox &nbsp;·&nbsp; Créateur de contenu</div>
-        <div class="sep sep-primakus"></div>
-
-        <div class="links">
-
-            <a class="link-item link-primakus" href="https://www.tiktok.com/@primakus0" target="_blank">
-                <div class="link-accent"></div>
-                <img src="tiktok.png" class="link-logo">
-                TikTok
-                <span class="link-arrow">›</span>
-            </a>
-
-            <a class="link-item link-primakus" href="https://discord.com/users/1439320270514028695" target="_blank">
-                <div class="link-accent"></div>
-                <img src="discord.png" class="link-logo">
-                Discord
-                <span class="link-arrow">›</span>
-            </a>
-
-            <a class="link-item link-primakus" href="https://youtube.com/@primakus" target="_blank">
-                <div class="link-accent"></div>
-                <img src="youtube.png" class="link-logo">
-                YouTube
-                <span class="link-arrow">›</span>
-            </a>
-
-            <a class="link-item link-primakus" href="https://www.roblox.com/users/profile?username=omit_30" target="_blank">
-                <div class="link-accent"></div>
-                <img src="roblox.png" class="link-logo">
-                Roblox
-                <span class="link-arrow">›</span>
-            </a>
-
-        </div>
-    </div>
+  </div>
 </div>
 
 <!-- PAGE DRAVOX -->
 <div class="page" id="dravox-page">
-
-    <div class="page-bg">
-        <img src="dravox.png.jpg">
-        <div class="page-bg-gradient-dravox"></div>
+  <div class="page-bg">
+    <img src="dravox.png.jpg">
+    <div class="page-bg-vignette"></div>
+    <div class="bg-glow-dravox"></div>
+  </div>
+  <button class="back-btn back-btn-dravox" onclick="goBack()">← Retour</button>
+  <div class="like-btn" id="like-btn-dravox" onclick="doLike('dravox')">
+    <span class="like-icon" id="like-icon-dravox">🤍</span>
+    <span class="like-count" id="like-count-dravox">0</span>
+    <span class="like-badge">likes</span>
+  </div>
+  <div class="page-content">
+    <div class="page-tag tag-dravox">✦ Profil</div>
+    <div class="page-title title-dravox">DRAVOX</div>
+    <div class="page-role">Développeur Roblox</div>
+    <div class="sep sep-dravox"></div>
+    <div class="links">
+      <a class="link-item link-dravox" href="https://www.tiktok.com/@jordanrp3dd" target="_blank">
+        <div class="link-dot"></div>
+        <img src="tiktok.png" class="link-logo">
+        <span class="link-text">TikTok</span>
+        <span class="link-arrow">›</span>
+      </a>
+      <a class="link-item link-dravox" href="https://discord.com/users/1415340351517888577" target="_blank">
+        <div class="link-dot"></div>
+        <img src="discord.png" class="link-logo">
+        <span class="link-text">Discord</span>
+        <span class="link-arrow">›</span>
+      </a>
+      <a class="link-item link-dravox" href="https://www.roblox.com/users/profile?username=jojo_25932" target="_blank">
+        <div class="link-dot"></div>
+        <img src="roblox.png" class="link-logo">
+        <span class="link-text">Roblox</span>
+        <span class="link-arrow">›</span>
+      </a>
     </div>
-
-    <button class="back-btn back-btn-dravox" onclick="goBack()">← Retour</button>
-
-    <!-- BOUTON LIKE DRAVOX -->
-    <div class="like-btn" id="like-btn-dravox" onclick="doLike('dravox')">
-        <img src="like.png" class="like-img">
-        <span class="like-count" id="like-count-dravox">0</span>
-        <span class="like-badge">likes</span>
-    </div>
-
-    <div class="page-content">
-
-        <div class="page-tag tag-dravox">Profil</div>
-        <div class="page-title title-dravox">DRAVOX</div>
-        <div class="page-role">Développeur Roblox</div>
-        <div class="sep sep-dravox"></div>
-
-        <div class="links">
-
-            <a class="link-item link-dravox" href="https://www.tiktok.com/@jordanrp3dd" target="_blank">
-                <div class="link-accent"></div>
-                <img src="tiktok.png" class="link-logo">
-                TikTok
-                <span class="link-arrow">›</span>
-            </a>
-
-            <a class="link-item link-dravox" href="https://discord.com/users/1415340351517888577" target="_blank">
-                <div class="link-accent"></div>
-                <img src="discord.png" class="link-logo">
-                Discord
-                <span class="link-arrow">›</span>
-            </a>
-
-            <a class="link-item link-dravox" href="https://www.roblox.com/users/profile?username=jojo_25932" target="_blank">
-                <div class="link-accent"></div>
-                <img src="roblox.png" class="link-logo">
-                Roblox
-                <span class="link-arrow">›</span>
-            </a>
-
-        </div>
-    </div>
+  </div>
 </div>
 
 <script>
-
 /* PARTICULES */
-
-const canvas = document.getElementById('particles');
+const canvas = document.getElementById('bg');
 const ctx = canvas.getContext('2d');
 let W, H, dots = [];
 
 function resize() {
-    W = canvas.width = window.innerWidth;
-    H = canvas.height = window.innerHeight;
+  W = canvas.width = window.innerWidth;
+  H = canvas.height = window.innerHeight;
 }
 
 function initDots() {
-    dots = [];
-    for (let i = 0; i < 90; i++) {
-        dots.push({
-            x:  Math.random() * W,
-            y:  Math.random() * H,
-            r:  Math.random() * 1.2 + 0.3,
-            vx: (Math.random() - 0.5) * 0.3,
-            vy: (Math.random() - 0.5) * 0.3,
-            o:  Math.random() * 0.5 + 0.1
-        });
-    }
+  dots = [];
+  for (let i = 0; i < 120; i++) {
+    dots.push({
+      x:    Math.random() * W,
+      y:    Math.random() * H,
+      r:    Math.random() * 1.4 + 0.3,
+      vx:   (Math.random() - 0.5) * 0.25,
+      vy:   (Math.random() - 0.5) * 0.25,
+      o:    Math.random() * 0.45 + 0.08,
+      hue:  Math.random() > 0.5 ? 260 : 200
+    });
+  }
 }
 
 function draw() {
-    ctx.clearRect(0, 0, W, H);
-
-    for (let d of dots) {
-        d.x += d.vx;
-        d.y += d.vy;
-        if (d.x < 0) d.x = W;
-        if (d.x > W) d.x = 0;
-        if (d.y < 0) d.y = H;
-        if (d.y > H) d.y = 0;
-
+  ctx.clearRect(0, 0, W, H);
+  for (let d of dots) {
+    d.x += d.vx; d.y += d.vy;
+    if (d.x < 0) d.x = W; if (d.x > W) d.x = 0;
+    if (d.y < 0) d.y = H; if (d.y > H) d.y = 0;
+    ctx.beginPath();
+    ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
+    ctx.fillStyle = `hsla(${d.hue}, 80%, 75%, ${d.o})`;
+    ctx.fill();
+  }
+  for (let i = 0; i < dots.length; i++) {
+    for (let j = i + 1; j < dots.length; j++) {
+      const dx = dots[i].x - dots[j].x;
+      const dy = dots[i].y - dots[j].y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 110) {
+        const h = dots[i].hue === dots[j].hue ? dots[i].hue : 230;
         ctx.beginPath();
-        ctx.arc(d.x, d.y, d.r, 0, Math.PI * 2);
-        ctx.fillStyle = `rgba(192, 132, 252, ${d.o})`;
-        ctx.fill();
+        ctx.moveTo(dots[i].x, dots[i].y);
+        ctx.lineTo(dots[j].x, dots[j].y);
+        ctx.strokeStyle = `hsla(${h}, 70%, 70%, ${0.1 * (1 - dist / 110)})`;
+        ctx.lineWidth = 0.5;
+        ctx.stroke();
+      }
     }
-
-    for (let i = 0; i < dots.length; i++) {
-        for (let j = i + 1; j < dots.length; j++) {
-            const dx   = dots[i].x - dots[j].x;
-            const dy   = dots[i].y - dots[j].y;
-            const dist = Math.sqrt(dx * dx + dy * dy);
-            if (dist < 120) {
-                ctx.beginPath();
-                ctx.moveTo(dots[i].x, dots[i].y);
-                ctx.lineTo(dots[j].x, dots[j].y);
-                ctx.strokeStyle = `rgba(168, 85, 247, ${0.12 * (1 - dist / 120)})`;
-                ctx.lineWidth = 0.5;
-                ctx.stroke();
-            }
-        }
-    }
-
-    requestAnimationFrame(draw);
+  }
+  requestAnimationFrame(draw);
 }
 
-resize();
-initDots();
-draw();
+resize(); initDots(); draw();
 window.addEventListener('resize', () => { resize(); initDots(); });
 
 /* NAVIGATION */
-
 function openPage(who) {
-    document.getElementById('menu').style.display = 'none';
-    document.getElementById(who + '-page').classList.add('active');
+  document.getElementById('menu').style.display = 'none';
+  document.getElementById(who + '-page').classList.add('active');
 }
 
 function goBack() {
-    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-    document.getElementById('menu').style.display = 'flex';
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.getElementById('menu').style.display = 'flex';
 }
 
-/* SYSTÈME DE LIKES */
-
-// Charger les compteurs depuis localStorage
+/* LIKES */
 let likes = {
-    primakus: parseInt(localStorage.getItem('likes_primakus') || '0'),
-    dravox:   parseInt(localStorage.getItem('likes_dravox')   || '0')
+  primakus: parseInt(localStorage.getItem('likes_primakus') || '0'),
+  dravox:   parseInt(localStorage.getItem('likes_dravox')   || '0')
 };
 
-// Afficher les compteurs au chargement
 document.getElementById('like-count-primakus').textContent = likes.primakus;
 document.getElementById('like-count-dravox').textContent   = likes.dravox;
 
-// Griser les boutons si déjà liké
-if (localStorage.getItem('liked_primakus') === 'true') {
-    document.getElementById('like-btn-primakus').classList.add('liked');
-}
-if (localStorage.getItem('liked_dravox') === 'true') {
-    document.getElementById('like-btn-dravox').classList.add('liked');
-}
+['primakus', 'dravox'].forEach(who => {
+  if (localStorage.getItem('liked_' + who) === 'true') {
+    document.getElementById('like-btn-' + who).classList.add('liked');
+    document.getElementById('like-icon-' + who).textContent = '❤️';
+  }
+});
 
 function doLike(who) {
-    // Déjà liké = on fait rien
-    if (localStorage.getItem('liked_' + who) === 'true') return;
-
-    // Incrémenter le compteur
-    likes[who]++;
-    localStorage.setItem('likes_' + who, likes[who]);
-    localStorage.setItem('liked_' + who, 'true');
-
-    // Mettre à jour l'affichage
-    document.getElementById('like-count-' + who).textContent = likes[who];
-
-    // Marquer comme liké
-    document.getElementById('like-btn-' + who).classList.add('liked');
-
-    // Lancer l'animation des coeurs
-    spawnHearts();
+  if (localStorage.getItem('liked_' + who) === 'true') return;
+  likes[who]++;
+  localStorage.setItem('likes_' + who, likes[who]);
+  localStorage.setItem('liked_' + who, 'true');
+  document.getElementById('like-count-' + who).textContent = likes[who];
+  const btn  = document.getElementById('like-btn-' + who);
+  const icon = document.getElementById('like-icon-' + who);
+  btn.classList.add('liked');
+  icon.textContent = '❤️';
+  icon.style.transform = 'scale(1.5)';
+  setTimeout(() => icon.style.transform = 'scale(1)', 300);
+  spawnHearts();
 }
 
 function spawnHearts() {
-    const emojis = ['❤️', '💜', '💙', '💖', '💗', '💕'];
-    const count  = 30;
-
-    for (let i = 0; i < count; i++) {
-        setTimeout(() => {
-            const heart     = document.createElement('div');
-            heart.className = 'heart-particle';
-            heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-
-            // Position aléatoire en haut
-            heart.style.left     = Math.random() * 100 + 'vw';
-            heart.style.fontSize = (16 + Math.random() * 24) + 'px';
-
-            // Vitesse aléatoire
-            const duration = 2 + Math.random() * 2;
-            heart.style.animationDuration = duration + 's';
-
-            document.body.appendChild(heart);
-
-            // Supprimer après l'animation
-            setTimeout(() => heart.remove(), duration * 1000);
-
-        }, i * 60);
-    }
+  const emojis = ['❤️', '💜', '💙', '💖', '🩷', '✨', '💫'];
+  const count  = 25;
+  for (let i = 0; i < count; i++) {
+    setTimeout(() => {
+      const heart = document.createElement('div');
+      heart.className = 'heart-particle';
+      heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+      heart.style.left = Math.random() * 100 + 'vw';
+      heart.style.fontSize = (14 + Math.random() * 20) + 'px';
+      const dur = 2 + Math.random() * 1.5;
+      heart.style.animationDuration = dur + 's';
+      document.body.appendChild(heart);
+      setTimeout(() => heart.remove(), dur * 1000);
+    }, i * 70);
+  }
 }
-
 </script>
 </body>
 </html>
