@@ -229,6 +229,83 @@ body {
     color: #38bdf8;
 }
 
+/* SYSTEME DE LIKE */
+
+.like-btn {
+    position: fixed;
+    top: 24px;
+    right: 24px;
+    z-index: 20;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255, 255, 255, 0.04);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 50px;
+    padding: 8px 16px 8px 8px;
+    cursor: pointer;
+    transition: all 0.3s;
+    user-select: none;
+}
+
+.like-btn:hover {
+    background: rgba(255, 255, 255, 0.08);
+    border-color: rgba(255, 100, 130, 0.4);
+    transform: scale(1.05);
+}
+
+.like-btn.liked {
+    border-color: rgba(255, 100, 130, 0.6);
+    background: rgba(255, 100, 130, 0.08);
+    cursor: default;
+}
+
+.like-btn.liked:hover {
+    transform: none;
+}
+
+.like-img {
+    width: 36px;
+    height: 36px;
+    object-fit: contain;
+    transition: transform 0.3s;
+}
+
+.like-btn:not(.liked):hover .like-img {
+    transform: scale(1.2) rotate(-10deg);
+}
+
+.like-count {
+    font-size: 16px;
+    font-weight: 500;
+    color: white;
+    min-width: 20px;
+}
+
+.like-badge {
+    font-size: 10px;
+    letter-spacing: 2px;
+    text-transform: uppercase;
+    color: rgba(255, 100, 130, 0.7);
+}
+
+/* COEURS QUI TOMBENT */
+
+.heart-particle {
+    position: fixed;
+    top: -40px;
+    font-size: 24px;
+    pointer-events: none;
+    z-index: 999;
+    animation: fallDown 2.5s ease-in forwards;
+}
+
+@keyframes fallDown {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+    80%  { opacity: 1; }
+    100% { transform: translateY(110vh) rotate(360deg); opacity: 0; }
+}
+
 /* CONTENU PAGE */
 
 .page-tag {
@@ -367,7 +444,7 @@ body {
     transform: translateX(5px);
 }
 
-/* ANIMATION */
+/* ANIMATION PAGE */
 
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(20px); }
@@ -421,6 +498,13 @@ body {
 
     <button class="back-btn back-btn-primakus" onclick="goBack()">← Retour</button>
 
+    <!-- BOUTON LIKE PRIMAKUS -->
+    <div class="like-btn" id="like-btn-primakus" onclick="doLike('primakus')">
+        <img src="like.png" class="like-img">
+        <span class="like-count" id="like-count-primakus">0</span>
+        <span class="like-badge">likes</span>
+    </div>
+
     <div class="page-content">
 
         <div class="page-tag tag-primakus">Profil</div>
@@ -471,6 +555,13 @@ body {
     </div>
 
     <button class="back-btn back-btn-dravox" onclick="goBack()">← Retour</button>
+
+    <!-- BOUTON LIKE DRAVOX -->
+    <div class="like-btn" id="like-btn-dravox" onclick="doLike('dravox')">
+        <img src="like.png" class="like-img">
+        <span class="like-count" id="like-count-dravox">0</span>
+        <span class="like-badge">likes</span>
+    </div>
 
     <div class="page-content">
 
@@ -584,6 +675,72 @@ function openPage(who) {
 function goBack() {
     document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
     document.getElementById('menu').style.display = 'flex';
+}
+
+/* SYSTÈME DE LIKES */
+
+// Charger les compteurs depuis localStorage
+let likes = {
+    primakus: parseInt(localStorage.getItem('likes_primakus') || '0'),
+    dravox:   parseInt(localStorage.getItem('likes_dravox')   || '0')
+};
+
+// Afficher les compteurs au chargement
+document.getElementById('like-count-primakus').textContent = likes.primakus;
+document.getElementById('like-count-dravox').textContent   = likes.dravox;
+
+// Griser les boutons si déjà liké
+if (localStorage.getItem('liked_primakus') === 'true') {
+    document.getElementById('like-btn-primakus').classList.add('liked');
+}
+if (localStorage.getItem('liked_dravox') === 'true') {
+    document.getElementById('like-btn-dravox').classList.add('liked');
+}
+
+function doLike(who) {
+    // Déjà liké = on fait rien
+    if (localStorage.getItem('liked_' + who) === 'true') return;
+
+    // Incrémenter le compteur
+    likes[who]++;
+    localStorage.setItem('likes_' + who, likes[who]);
+    localStorage.setItem('liked_' + who, 'true');
+
+    // Mettre à jour l'affichage
+    document.getElementById('like-count-' + who).textContent = likes[who];
+
+    // Marquer comme liké
+    document.getElementById('like-btn-' + who).classList.add('liked');
+
+    // Lancer l'animation des coeurs
+    spawnHearts();
+}
+
+function spawnHearts() {
+    const emojis = ['❤️', '💜', '💙', '💖', '💗', '💕'];
+    const count  = 30;
+
+    for (let i = 0; i < count; i++) {
+        setTimeout(() => {
+            const heart     = document.createElement('div');
+            heart.className = 'heart-particle';
+            heart.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+
+            // Position aléatoire en haut
+            heart.style.left     = Math.random() * 100 + 'vw';
+            heart.style.fontSize = (16 + Math.random() * 24) + 'px';
+
+            // Vitesse aléatoire
+            const duration = 2 + Math.random() * 2;
+            heart.style.animationDuration = duration + 's';
+
+            document.body.appendChild(heart);
+
+            // Supprimer après l'animation
+            setTimeout(() => heart.remove(), duration * 1000);
+
+        }, i * 60);
+    }
 }
 
 </script>
